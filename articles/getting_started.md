@@ -133,10 +133,6 @@ However, Riak Java client constants do not include Clojure data content type. To
 Serialized values will be deserialized automatically by Welle when you fetch them, as you will see later in this guide.
 
 
-## Using secondary indexes
-
-TBD
-
 
 ## Fetching values
 
@@ -167,15 +163,47 @@ instances, too:
 {% gist 41157189e87b56d46aa8 %}
 
 
+## Using secondary indexes
+
+Fetching data by key may get you quite far if you are smart about choose keys but often it is more convenient to use secondary indexes to
+query your data. Secondary indexes (often referred to as 2i) have two sides to them:
+
+ * Indexing data
+ * Querying
+
+With Riak, you specify indexes and index values when storing values using the `:indexes` option:
+
+{% gist 18f1ab3abea1a942e9e0 %}
+
+Each value may have its own set of indexes. There is no predefined set of indexes, like with some other data stores (for example, PostgreSQL).
+If index values are specified for an object, Riak will index the value and distribute information about the new index entry in the cluster.
+Please note that string indexes need to be passed as sets (and may contain multiple values).
+
+
 
 ## Secondary index queries
 
-TBD
+Once you have some objects stored and indexed, lets take a look how to perform 2i queries with Welle. `clojurewerkz.welle.kv` namespace
+provides a function to do it, `index-query`. It is used similarly to `clojurewerkz.welle.kv/fetch`:
+
+{% gist 43b4a2b151994612d4cf %}
+
+You pass it the name of the index to use and a value. Welle will return you a list of keys that you can then fetch, combine with
+a list of keys returned by another index query or use with map/reduce.
+
+Riak also supports range queries. In the example used throughout this guide we index a user's age. To get a list of keys of objects
+with ages between 25 and 30, pass a pair (typically as a vector, so `[25 30]`) for index value:
+
+{% gist 5b9a9da82b75b7c5a4bf %}
 
 
 ## Deleting values
 
-TBD
+To delete an object, use `clojurewerkz.welle.kv/delete` function. In the simplest case it takes a bucket name and a key,
+just like `clojurewerkz.welle.kv/fetch`:
+
+{% gist 0eb8f9519a930b529a99 %}
+
 
 
 ## Using Map/Reduce
