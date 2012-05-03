@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 1.0.0-alpha3, the most recent pre-release version. Welle is a young project but most of the public API
+This guide covers Welle 1.0.0-alpha4, the most recent pre-release version. Welle is a young project but most of the public API
 is fleshed out and will not change before the 1.0 release.
 
 
@@ -52,15 +52,17 @@ features may be specific to Riak 1.1 and later versions.
 
 ### With Leiningen
 
-    [clojurewerkz/welle "1.0.0-alpha3"]
+    [clojurewerkz/welle "1.0.0-alpha4"]
 
 ### With Maven
 
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>welle</artifactId>
-      <version>1.0.0-alpha3</version>
+      <version>1.0.0-alpha4</version>
     </dependency>
+
+It is recommended to stay up-to-date with new versions. New releases and important changes are announced [@ClojureWerkz](http://twitter.com/ClojureWerkz).
 
 
 ## Connecting to Riak
@@ -213,7 +215,7 @@ TBD
 
 ## What to read next
 
-Documentation is organized as a number of guides, covering all kinds of topics.
+The documentation is organized as a number of guides, covering all kinds of topics.
 
 We recommend that you read the following guides first, if possible, in this order:
 
