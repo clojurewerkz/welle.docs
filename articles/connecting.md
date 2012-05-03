@@ -16,7 +16,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 1.0.0-alpha4, the most recent pre-release version. Welle is a young project but most of the public API
+This guide covers Welle 1.0.0-alpha5, the most recent pre-release version. Welle is a young project but most of the public API
 is fleshed out and will not change before the 1.0 release.
 
 
