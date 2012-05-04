@@ -87,13 +87,13 @@ by Riak](http://wiki.basho.com/Vector-Clocks.html) for conflict detection and re
 ## Creating buckets
 
 Riak stores data in [buckets](http://wiki.basho.com/Riak-Glossary.html#Bucket) (similar to tables in relational databases and collections in MongoDB).
-So, before storing data, it is a good idea to create a bucket. You use `clojurewerkz.welle.buckets/create` function to do it. In the simplest case,
+So, before storing data, it is a good idea to prepare a bucket. You use `clojurewerkz.welle.buckets/update` function to do it. In the simplest case,
 you only pass it the name of the bucket:
 
 {% gist fa06adda8ea6491d1516 %}
 
 Riak buckets have properties. In the example above, we rely on all defaults. In many cases, you will want to tweak bucket properties.
-To do so, pass additional arguments to `clojurewerkz.welle.buckets/create`, like so:
+To do so, pass additional arguments to `clojurewerkz.welle.buckets/update`, like so:
 
 {% gist 94af48ceb14fea0e77f7 %}
 
