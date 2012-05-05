@@ -221,12 +221,10 @@ We recommend that you read the following guides first, if possible, in this orde
 
  * [Connecting to Riak](/articles/connecting.html)
  * [Working with buckets](/articles/buckets.html)
- * [Storing values](/articles/inserting.html)
- * [Fetching values](/articles/querying.html)
+ * [Key/Value operations](/articles/kv.html)
  * [Secondary indexes](/articles/2i.html)
- * [Deleting values](/articles/deleting.html)
- * [Map/Reduce](/articles/mapreduce.html)
  * [Riak search](/articles/search.html)
+ * [Map/Reduce](/articles/mapreduce.html)
  * [Integration with 3rd party libraries](/articles/integration.html)
 
 
