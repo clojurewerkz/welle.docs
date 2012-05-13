@@ -177,7 +177,7 @@ instances.
 ## What to read next
 
  * [Secondary indexes](/articles/2i.html)
- * [Riak search](/articles/search.html)
+ * [Links and link walking](/articles/links.html)
  * [Map/Reduce](/articles/mapreduce.html)
  * [Integration with 3rd party libraries](/articles/integration.html)
 

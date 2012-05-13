@@ -66,12 +66,10 @@ The documentation is organized as a number of guides, covering all kinds of topi
 We recommend that you read the following guides first, if possible, in this order:
 
  * [Working with buckets](/articles/buckets.html)
- * [Storing values](/articles/inserting.html)
- * [Fetching values](/articles/querying.html)
+ * [Key/Value Operations](/articles/kv.html)
  * [Secondary indexes](/articles/2i.html)
- * [Deleting values](/articles/deleting.html)
+ * [Links and link walking](/articles/links.html)
  * [Map/Reduce](/articles/mapreduce.html)
- * [Riak search](/articles/search.html)
  * [Integration with 3rd party libraries](/articles/integration.html)
 
 
