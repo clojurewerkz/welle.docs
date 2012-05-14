@@ -22,21 +22,51 @@ is fleshed out and will not change before the 1.0 release.
 
 ## Introduction
 
-TBD
+[Riak Links](http://wiki.basho.com/Links.html) are metadata that establish one-way relationships between objects in Riak. They can be used to loosely model graph like
+relationships between objects in Riak.
+
+Much like [secondary indexes](/2i.html), links are specified à la carte, when a value is stored. It is then possible to traverse links (a process known as
+**link walking**) to collect related values.
+
 
 ## Storing links with values
 
-TBD
+Links are specified using the `:links` option of `clojurewerkz.welle.kv/store` function. Each link is a map with three keys:
+
+{% gist 4e80fec97bda82d376af %}
+
+Bucket and key identify the value being referenced. Tag is a kind of relationship (some graph databases call it **relationship type**)
+
+In the following example, we create a `friend` link to express friendship between two people:
+
+{% gist 72f9f34cbf54017c7cef %}
+
 
 
 ## Link walking
 
-TBD
+To traverse a sequence links, use link walking DSL functions from the `clojurewerkz.welle.links` namespace:
+
+{% gist 6878f674b9f7b7245429 %}
+
+The `walk` function takes traversal starting point (specified here using the `clojurewerkz.welle.links/start-at` function) as the first argument and one or more steps as
+remaining arguments. Each step is specified using the `clojurewerkz.welle.links/step` function and consists of
+
+ * A bucket name
+ * A link tag to use
+ * Accumulator flag
+
+If the accumulator flag is true, values found at the given step will be included in the end result. In our example above we want to find friends of
+a particular person so we set the flag to `true`. If we wanted to find friends of friends of the person instead, we would use two steps and only included
+values found during the last step into the final result set:
+
+{% gist c31b47c1ab637713c102 %}
 
 
 ## Wrapping up
 
-TBD
+While Riak is not a graph database like [Neo4J](http://neo4j.org), links can cover many common scenarios, such as articles and comments or events and participants (when there are
+reasons to not denormalize associated values into the parent).
 
 
 ## What to read next
