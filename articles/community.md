@@ -5,7 +5,7 @@ layout: article
 
 ## Mailing List
 
-[Project has a mailing list](). Feel free to join it and ask any questions you may have.
+[Welle has a mailing list](http://groups.google.com/group/clojure-riak). Feel free to join it and ask any questions you may have.
 
 
 ## News & Announcements on Twitter
