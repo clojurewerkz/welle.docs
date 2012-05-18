@@ -1,5 +1,5 @@
 ---
-title: "Getting Started"
+title: "Welle, a Riak Clojure client: Getting Started"
 layout: article
 ---
 

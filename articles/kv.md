@@ -1,5 +1,5 @@
 ---
-title: "Storing and fetching data in Riak with Clojure"
+title: "Welle, a Riak Clojure client: Storing and fetching data in Riak with Clojure"
 layout: article
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Welle integration with other libraries"
+title: "With Clojure and Riak: integration with other libraries"
 layout: article
 ---
 

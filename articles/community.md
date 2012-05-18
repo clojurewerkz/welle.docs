@@ -1,5 +1,5 @@
 ---
-title: "Project Name: Community"
+title: "Welle, a Riak Clojure client: Community"
 layout: article
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Using links and link walking"
+title: "Welle, a Riak Clojure client: Using links and link walking"
 layout: article
 ---
 

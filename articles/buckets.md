@@ -1,5 +1,5 @@
 ---
-title: "Working with Riak buckets"
+title: "Welle, a Riak Clojure client: Working with Riak buckets"
 layout: article
 ---
 
