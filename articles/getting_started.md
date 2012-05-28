@@ -51,14 +51,14 @@ features may be specific to Riak 1.1 and later versions.
 
 ### With Leiningen
 
-    [com.novemberain/welle "1.0.0"]
+    [com.novemberain/welle "1.0.1"]
 
 ### With Maven
 
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>welle</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
     </dependency>
 
 It is recommended to stay up-to-date with new versions. New releases and important changes are announced [@ClojureWerkz](http://twitter.com/ClojureWerkz).
