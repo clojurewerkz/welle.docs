@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 1.0.x.
+This guide covers Welle 1.1.x.
 
 
 ## Welle Overview
@@ -49,16 +49,24 @@ features may be specific to Riak 1.1 and later versions.
 
 ## Adding Welle Dependency To Your Project
 
+Welle artifacts are [released to Clojars](https://clojars.org/com.novemberain/welle).
+
 ### With Leiningen
 
-    [com.novemberain/welle "1.0.1"]
+    [com.novemberain/welle "1.1.0"]
 
 ### With Maven
+
+Add Clojars repository definition to your `pom.xml`:
+
+{% gist 65642c4b53d26539e5f6 %}
+
+And then the dependency:
 
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>welle</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.0</version>
     </dependency>
 
 It is recommended to stay up-to-date with new versions. New releases and important changes are announced [@ClojureWerkz](http://twitter.com/ClojureWerkz).
