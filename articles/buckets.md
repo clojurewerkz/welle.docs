@@ -52,7 +52,7 @@ Welle supports setting the following [bucket properties](http://wiki.basho.com/H
  * `:n-val`: the number of replicas for objects in this bucket
  * `:r`, `:w`, `:dw`, `:rw`, `:pr`, `:pw` (integer or one of the `com.basho.riak.client.cap.Quora` values): default quorum values for operations on keys in the bucket
  * `:basic-quorum`: should a read request return early in some failure cases? For example, when a quorum of nodes respond with "not found".
- * `:enable-for-search` (true or false): whether Riak Search is enabled for the bucket
+ * `:enable-search` (true or false): whether Riak Search is enabled for the bucket
  * `:backend`: when using [riak_kv_multi_backend](http://wiki.basho.com/Storage-Backends.html), which named backend to use for the bucket
  * `:not-found-ok`: should a vnode returning notfound for a key increment the r tally? Use false for higher consistency, true for higher availability.
  * `:small-vclock`, `:big-vclock`, `:young-vclock`, `:old-vclock`: used for vector clock pruning (to [control vector clock growth](http://wiki.basho.com/HTTP-Get-Bucket-Properties.html))
