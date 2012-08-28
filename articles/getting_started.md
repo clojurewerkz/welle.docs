@@ -74,9 +74,9 @@ It is recommended to stay up-to-date with new versions. New releases and importa
 
 ## Connecting to Riak
 
-Riak and Welle support two transports: HTTP and Protocol Buffers. They vary in performance characteristics and supported features. For the
-purpose of this guide we will concentrate on the HTTP transport. This is what most applications use and it delivers pretty good performance
-most applications will be satisfied with.
+Riak and Welle support two transports: HTTP and Protocol Buffers. They vary in performance characteristics and supported features (PBC API supports
+searcn and secondary indexes starting with Riak 1.2). For the purpose of this guide we will concentrate on the HTTP transport. This is what most applications use
+and it delivers pretty good performance most applications will be satisfied with.
 
 ### Using HTTP transport
 

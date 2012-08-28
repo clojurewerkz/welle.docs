@@ -8,7 +8,7 @@ layout: article
 This guide covers:
 
  * Using Riak's HTTP transport with Welle
- * Using Protocol Buffers (PB) transport
+ * Using Protocol Buffers (PBC) transport
  * Checking connection health
 
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/welle.docs).
@@ -21,9 +21,9 @@ This guide covers Welle 1.2.
 
 ## Introduction
 
-Riak and Welle support two transports: HTTP and Protocol Buffers. They vary in performance characteristics and supported features. For the
-purpose of this guide we will concentrate on the HTTP transport. This is what most applications use and it delivers pretty good performance
-most applications will be satisfied with.
+Riak and Welle support two transports: HTTP and Protocol Buffers. They vary in performance characteristics and supported features (PBC API supports
+searcn and secondary indexes starting with Riak 1.2). Most applications use HTTP API: it delivers pretty good performance, easier to develop
+clients against and debug.
 
 
 ## Using Riak's HTTP transport
@@ -54,8 +54,11 @@ If Riak is not reachable, a `java.io.IOException` will be thrown.
 ## Differences between two transports
 
 As far as Welle API goes, you don't have to change anything besides using `clojurewerkz.welle.core/connect-via-pb!` instead of `clojurewerkz.welle.core/connect!`
-to go from one transport to the other. However, PB transport has certain limitations, for example, it does not support secondary indexes (2i).
-So if you try to use 2i features with the PB transport, an exception will be raised.
+to go from one transport to the other. However, the PBC transport has certain limitations, for example, it only supports secondary indexes (2i) and search starting
+with [Riak 1.2](http://basho.com/blog/technical/2012/08/07/Riak-1-2-released/).
+
+If you try to use a feature that the PBC API does not support, an exception will be raised. Going between two transports is straightforward with Welle, so
+don't hesitate to give Protocol Buffers a try.
 
 
 ## What to read next
