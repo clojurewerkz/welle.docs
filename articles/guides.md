@@ -55,6 +55,15 @@ This guide covers:
  * Secondary index queries
 
 
+### [Riak Search](/articles/search.html)
+
+This guide covers:
+
+ * Riak Search Overview
+ * Indexing
+ * Querying
+
+
 ### [Links and link walking](/articles/links.html)
 
 This guide covers:
