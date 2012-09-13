@@ -80,18 +80,26 @@ the index, perform queries, bulk index data and more. Learn more in the [Riak Se
 
 ## Querying
 
-To query Riak Search, use the `clojurewerkz.welle.solr/search` function which takes an index name and a query:
+Riak Search supports term and field queries, boolean operators, lexographical range queries,
+and trailing wildcard queries. Riak Search uses Lucene query syntax. For more information, see [Riak Search documentation on querying](http://wiki.basho.com/Riak-Search---Querying.html).
+
+To query Riak Search, use the `clojurewerkz.welle.solr/search` function which takes an index name and a query and returns
+a response as immutable Clojure map:
 
 {% gist 8d77e7a888ba0f86ffb8 %}
 
-TBD
+To retrieve hits (documents found) from a response, pass it to the `clojurewerkz.welle.solr/hits-from` function.
+
+`clojurewerkz.welle.solr/total-hits` is a function that takes a response and returns the total number of hits.
+`clojurewerkz.welle.solr/any-hits?` is a similar function that returns true if the total number of hints is greater than zero,
+false otherwise.
 
 
 ## Wrapping up
 
 Riak Search is a powerful feature that extends Riak's querying capabilities. It is not quite as extensive as
-specialized full text search solutions such as Elastic Search and Apache Solr. It can, however, be just
-as effective in many common cases.
+specialized full text search solutions such as Elastic Search and Apache Solr. It can, however, be very
+effective in many common cases.
 
 JSON, XML and text documents stored in Riak K/V can be indexed and queried.
 
