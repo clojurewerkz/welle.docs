@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 1.2.
+This guide covers Welle 1.3.
 
 
 ## Welle Overview
@@ -53,7 +53,7 @@ Welle artifacts are [released to Clojars](https://clojars.org/com.novemberain/we
 
 ### With Leiningen
 
-    [com.novemberain/welle "1.2.0"]
+    [com.novemberain/welle "1.3.0"]
 
 ### With Maven
 
@@ -66,7 +66,7 @@ And then the dependency:
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>welle</artifactId>
-      <version>1.2.0</version>
+      <version>1.3.0</version>
     </dependency>
 
 It is recommended to stay up-to-date with new versions. New releases and important changes are announced [@ClojureWerkz](http://twitter.com/ClojureWerkz).
