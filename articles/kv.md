@@ -111,7 +111,7 @@ Clojure has us covered here: it is possible use positional destructuring to get 
 
 {% gist af3dd517ea8f094a1a47 %}
 
-So if you are sure that there will be no conflicts, this practice is encouraged.
+So if you are sure that there will be no conflicts, this practice is encouraged. Alternatively, you can use `clojurewerkz.welle.kv/fetch-one` to fetch only a single value.
 
 So far we haven't passed any arguments to `clojurewerkz.welle.kv/fetch`. In case you need to do it, it is very similar to how you do
 it when storing data:
