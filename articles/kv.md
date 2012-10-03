@@ -89,7 +89,7 @@ Metadata will be transparently turned into a Clojure map when stored value is fe
  * `:last-modified`: last value modification date
  * `:return-body`: should the store operation return the new data item and its metadata?
  * `:if-none-match`: only store if bucket/key does not exist
- * `:if-none-modified`: only store if the vclock supplied on store matches the vclock in Riak
+ * `:if-not-modified`: only store if the vclock supplied on store matches the vclock in Riak
 
 
 
