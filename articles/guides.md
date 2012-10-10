@@ -7,6 +7,9 @@ layout: article
 
 [Welle documentation](https://github.com/clojurewerkz/welle.docs) is organized as a number of guides, covering all kinds of topics.
 
+The guides try to provide an overview of Riak features and why they exist. They, however, focus on Welle first and foremost
+and by no means are comprehensive; consult [Riak documentation](http://docs.basho.com/) for more information.
+
 We recommend that you read these guides, if possible, in this order:
 
 
