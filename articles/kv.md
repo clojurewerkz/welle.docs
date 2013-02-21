@@ -141,10 +141,17 @@ instances:
  * `:vtag`: when accessing an object with siblings, [which sibling to retrieve](http://wiki.basho.com/HTTP-Fetch-Object.html#Manually-requesting-siblings)
  * `:if-none-match` (date): a date for [conditional get](http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html). Only supported by HTTP transport.
  * `:if-modified-vclock`: a vclock instance to use for conditional get. Only supported by Protocol Buffers transport.
- * `:return-deleted-vlock` (true or false): if an object has been deleted, should the tombstone vclock be returned?
+ * `:return-deleted-vlock` (true or false): should tombstones (objects that have been deleted but not yet resolved/GCed) be returned?
  * `:head-only` (true or false): should the response only return object metadata, not its value?
 
 Default values for these options are also [defined at the bucket level](/articles/buckets.html).
+
+### Tombstones Handling
+
+In eventually consistent systems such as Riak, deleted objects may sometimes "reappear" due to concurrent modifications.
+Welle by default will filter out tombstones in `clojurewerkz.welle.kv/fetch`. If you want to retrieve all objects
+including tombstones, pass `:return-deleted-vlock` as `true` to `clojurewerkz.welle.kv/fetch`. This behavior
+is new in Welle `1.4.0` which uses Riak Java client `1.1.0`.
 
 
 ## Deleting values
