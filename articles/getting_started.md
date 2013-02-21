@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 1.3.
+This guide covers Welle 1.4.
 
 
 ## Welle Overview
@@ -46,6 +46,8 @@ Welle is built from the ground up for Clojure 1.3 and later.
 Welle currently uses Riak Java driver 1.0.x under the hood and thus supports Riak 1.0 and later versions. Please note that some
 features may be specific to Riak 1.1, 1.2 or later versions.
 
+Welle `1.4.0` is compatible with Riak `1.3.0`.
+
 
 ## Adding Welle Dependency To Your Project
 
@@ -53,7 +55,7 @@ Welle artifacts are [released to Clojars](https://clojars.org/com.novemberain/we
 
 ### With Leiningen
 
-    [com.novemberain/welle "1.3.1"]
+    [com.novemberain/welle "1.4.0"]
 
 ### With Maven
 
@@ -66,7 +68,7 @@ And then the dependency:
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>welle</artifactId>
-      <version>1.3.1</version>
+      <version>1.4.0</version>
     </dependency>
 
 It is recommended to stay up-to-date with new versions. New releases and important changes are announced [@ClojureWerkz](http://twitter.com/ClojureWerkz).
