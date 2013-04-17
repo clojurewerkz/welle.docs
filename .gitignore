@@ -12,3 +12,5 @@ _site/*
 _source/*
 deploy.sh
 server/*
+_cache/*
+
