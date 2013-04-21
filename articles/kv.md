@@ -56,6 +56,13 @@ However, Riak Java client constants do not include Clojure data content type. To
 Serialized values will be deserialized automatically by Welle when you fetch them, as you will see later in this guide.
 
 
+
+### Skipping Automatic Deserialization
+
+`clojurewerkz.welle.kv/fetch` supports a new boolean option `:skip-deserialize` that allows
+automatic deserialization to be skipped.
+
+
 ### Main consistency/availability options
 
 Riak lets you trade some availability for consistency (or vice versa) for individual requests. To do so, use the following
@@ -177,7 +184,57 @@ instances.
 
 ### Other options
 
- * `:vclock`: TBD
+ * `:vclock`: vector clocks to use for the update
+
+
+
+### clojurewerkz.welle.kv/modify
+
+`clojurewerkz.welle.kv/modify` is a new function that combines `clojurewerkz.welle.kv/fetch` and
+`clojurewerkz.welle.kv/store` with a user-provided mutation functions. The mutation function
+should take a single Riak object as an immutable map and return a modified one.
+
+In case of siblings, a resolver should be used.
+
+`clojurewerkz.welle.kv/modify` will update modification timestamp of the object.
+
+`clojurewerkz.welle.kv/modify` takes the same options as `clojurewerkz.welle.kv/fetch` and
+`clojurewerkz.welle.kv/store`
+
+
+### Conflcit Resolvers
+
+`clojurewerkz.welle.kv/fetch`, and `clojurewerkz.welle.kv/store` now accept a new
+option: `:resolver`. Resolvers are basically pure functions that take a collection of
+siblings and return a collection of Riak object maps.
+
+Resolvers can be created using
+`clojurewerkz.welle.conversion/resolver-from` which takes a function that accepts a collection
+of deserialized (unless `fetch` was told otherwise) values and applies any conflict resolution
+logic necessary.
+
+`clojurewerkz.welle.kv/fetch-one` now also supports resolvers via the `:resolver` option.
+It will raise an exception if siblings are detected and no resolver is provided.
+
+
+
+### Retriers
+
+`clojurewerkz.welle.kv/fetch`, `clojurewerkz.welle.kv/fetch-one`, `clojurewerkz.welle.kv/store`,
+`clojurewerkz.welle.kv/delete`, and `clojurewerkz.welle.kv/index-query` now retry operations
+that fail due to a network issue or any other exception.
+
+By default, the operations will be retrier 3 times. It is possible to provide a custom
+retrier using the `:retrier` option. Retriers can be created using
+`clojurewerkz.welle.conversion/retrier-from` which takes a function that accepts a callable
+(an operation that may need to be retried) and needs to invoke it, handling exceptions
+and applying any retrying logic needed.
+
+
+`clojurewerkz.welle.conversion/counting-retrier` produces a retrier that will retry an operation
+given number of times. This is the kind of retrier Welle uses by default.
+
+
 
 
 ## What to read next
