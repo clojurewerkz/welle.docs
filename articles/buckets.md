@@ -83,11 +83,20 @@ Welle supports setting the following [bucket properties](http://wiki.basho.com/H
 Note that some properties may depend on your Riak cluster configuration, transport used (HTTP vs Protocol Buffers) and Riak version. 
 
 
-## How to list buckets
+## How To List Buckets
 
 Use `clojurewerkz.welle.buckets/update` function. It takes no arguments and returns a set of strings (bucket names in the cluster):
 
-{% gist ddb629aa25c9e1c873bd %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]))
+
+(wc/connect!)
+
+;; list buckets in the cluster, returns a persistent set of strings
+(wb/list)
+```
 
 
 
