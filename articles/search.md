@@ -16,7 +16,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 1.3.
+This guide covers Welle 1.5.
 
 
 ## Introduction
@@ -31,7 +31,13 @@ advanced query capability next to MapReduce, but is far more concise; easier to 
 Riak Search is an optional feature that can be disabled. Make sure it is enabled in the `app.config` file before attempting to use
 it. Here is an example snippet that demonstrates how to do it:
 
-{% gist cc3d6456bcda692d8081 %}
+``` erlang
+ %% Riak Search Config
+ {riak_search, [
+                %% Riak Search is enabled
+                {enabled, true}
+               ]},
+```
 
 
 ## Indexing
@@ -47,7 +53,16 @@ properties and how to update them in the [Working with Buckets guide](/articles/
 It is possible to submit a document to Riak Search for indexing and not by adding it to a bucket via Riak K/V.
 With Welle you do that via the `clojurewerkz.welle.solr/index` function which takes an index name and a document:
 
-{% gist a1385d626ab0e9cb6e85 %}
+``` clojure
+(require '[clojurewerkz.welle.solr    :as wsolr])
+
+;; indexing
+(wsolr/delete-via-query "an-index" "text:*")
+(wsolr/index bucket-name {:username  "clojurewerkz"
+                          :text      "Elastisch beta3 is out, several more @elasticsearch features supported github.com/clojurewerkz/elastisch, improved docs http://clojureelasticsearch.info #clojure"
+                          :timestamp "20120802T101232+0100"
+                          :id        1})
+```
 
 `clojurewerkz.welle.solr/delete-via-query` is a function that removes documents that match the query from the index.
 
@@ -86,7 +101,15 @@ and trailing wildcard queries. Riak Search uses Lucene query syntax. For more in
 To query Riak Search, use the `clojurewerkz.welle.solr/search` function which takes an index name and a query and returns
 a response as immutable Clojure map:
 
-{% gist 8d77e7a888ba0f86ffb8 %}
+``` clojure
+(require '[clojurewerkz.welle.solr    :as wsolr])
+
+;; querying
+(let [result (wsolr/search "an-index" "title:feature")
+      hits   (wsolr/hits-from result)]
+  (println result)
+  (println hits))
+```
 
 To retrieve hits (documents found) from a response, pass it to the `clojurewerkz.welle.solr/hits-from` function.
 
@@ -95,7 +118,7 @@ To retrieve hits (documents found) from a response, pass it to the `clojurewerkz
 false otherwise.
 
 
-## Wrapping up
+## Wrapping Up
 
 Riak Search is a powerful feature that extends Riak's querying capabilities. It is not quite as extensive as
 specialized full text search solutions such as Elastic Search and Apache Solr. It can, however, be very
@@ -104,7 +127,7 @@ effective in many common cases.
 JSON, XML and text documents stored in Riak K/V can be indexed and queried.
 
 
-## What to read next
+## What To Read Next
 
 The documentation is organized as a number of guides, covering all kinds of topics.
 
