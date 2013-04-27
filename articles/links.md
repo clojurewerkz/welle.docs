@@ -14,7 +14,7 @@ This guide covers:
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/welle.docs).
 
 
-## What version of Welle does this guide cover?
+## What Version of Welle Does This Guide Cover?
 
 This guide covers Welle 1.5.
 
@@ -28,25 +28,40 @@ Much like [secondary indexes](/2i.html), links are specified à la carte, when a
 **link walking**) to collect related values.
 
 
-## Storing links with values
+## Storing Links With Values
 
 Links are specified using the `:links` option of `clojurewerkz.welle.kv/store` function. Each link is a map with three keys:
 
-{% gist 4e80fec97bda82d376af %}
+``` clojure
+{:bucket "people" :key "joe" :tag "friend"}
+```
 
 Bucket and key identify the value being referenced. Tag is a kind of relationship (some graph databases call it **relationship type**)
 
 In the following example, we create a `friend` link to express friendship between two people:
 
-{% gist 72f9f34cbf54017c7cef %}
+``` clojure
+(kv/store "people" "joe" {:name "Joe" :age 30} :content-type "application/clojure")
+(kv/store "people" "jane" {:name "Jane" :age 32}
+          :content-type "application/clojure"
+          :links [{:bucket bucket-name :key "joe" :tag "friend"}])
+```
 
 
 
-## Link walking
+## Link Walking
 
 To traverse a sequence links, use link walking DSL functions from the `clojurewerkz.welle.links` namespace:
 
-{% gist 6878f674b9f7b7245429 %}
+``` clojure
+(ns my.app
+  (:use clojurewerkz.welle.links))
+
+;; finding friends
+(walk
+  (start-at "people" "jane")
+  (step     "people" "friend" true))
+```
 
 The `walk` function takes traversal starting point (specified here using the `clojurewerkz.welle.links/start-at` function) as the first argument and one or more steps as
 remaining arguments. Each step is specified using the `clojurewerkz.welle.links/step` function and consists of
@@ -59,13 +74,24 @@ If the accumulator flag is true, values found at the given step will be included
 a particular person so we set the flag to `true`. If we wanted to find friends of friends of the person instead, we would use two steps and only included
 values found during the last step into the final result set:
 
-{% gist c31b47c1ab637713c102 %}
+``` clojure
+(ns my.app
+  (:use clojurewerkz.welle.links))
+
+;; finding friends of friends
+(walk
+  (start-at "people" "jane")
+  (step     "people" "friend" false)
+  (step     "people" "friend" true))
+```
 
 
-## Wrapping up
+## Wrapping Up
 
-While Riak is not a graph database like [Neo4J](http://neo4j.org), links can cover many common scenarios, such as articles and comments or events and participants (when there are
-reasons to not denormalize associated values into the parent).
+While Riak is not a graph database like [Neo4J](http://neo4j.org) or [Titan](http://thinkaurelius.github.com/titan/),
+links can cover many common scenarios, such as articles and comments
+or events and participants (when there are reasons to not denormalize
+associated values into the parent).
 
 
 ## What to read next
@@ -81,6 +107,10 @@ We recommend that you read the following guides first, if possible, in this orde
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Welle mailing list](https://groups.google.com/forum/#!forum/clojure-riak)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Welle mailing
+list](https://groups.google.com/forum/#!forum/clojure-riak)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
