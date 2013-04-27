@@ -33,17 +33,39 @@ and some of them are just defaults for read and write operations on keys (so, th
 Lets take a look at how bucket properties are set (updated).
 
 
-## How to set and update bucket properties
+## How To Set And Update Bucket Properties
 
 To update bucket properties, you use `clojurewerkz.welle.buckets/update` function:
 
-{% gist e3c12977d5d1d4a9a78d %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]))
+
+(wc/connect!)
+
+;; set bucket properties to (effectively) ignore conflicts
+;; and replicate objects in this bucket 5 times in the cluster
+(wb/update "a.bucket" :last-write-wins true :n 5)
+```
 
 When invoked without any options (just bucket name), it will use all defaults. Bucket properties can be updated multiple times:
 
-{% gist e18783eef353b8995075 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]))
 
-### Riak bucket properties
+(wc/connect!)
+
+;; set bucket properties
+(wb/update "a.bucket" :last-write-wins true)
+
+;; update them again
+(wb/update "a.bucket" :last-write-wins false)
+```
+
+### Riak Bucket Properties
 
 Welle supports setting the following [bucket properties](http://wiki.basho.com/HTTP-Set-Bucket-Properties.html):
 
@@ -69,15 +91,31 @@ Use `clojurewerkz.welle.buckets/update` function. It takes no arguments and retu
 
 
 
-## How to fetch bucket properties
+## How To Fetch Bucket Properties
 
 Use `clojurewerkz.welle.buckets/fetch` function. It takes bucket name as the only argument and returns bucket properties as a Clojure map:
 
-{% gist 952d92a181e849a53096 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]))
+
+(wc/connect!)
+
+;; set bucket properties
+(wb/update "a.bucket" :last-write-wins true :n 5)
+
+;; fetch them back as a Clojure map
+(wb/fetch "a.bucket")
+; => {:r #<Quorum com.basho.riak.client.cap.Quorum@333b68cb>, :not-found-ok true, :young-vclock 0,
+; => :backend nil, :n-val 5, :search false, :last-write-wins true, :small-vclock 0, :basic-quorum false,
+; => :dw #<Quorum com.basho.riak.client.cap.Quorum@5e9df8>, :rw #<Quorum com.basho.riak.client.cap.Quorum@5e9df8>,
+; => :big-vclock 0, :name welle.test.a-bucket, :old-vclock 0, :pr #<Quorum com.basho.riak.client.cap.Quorum@333b68ac>,
+; => :pw #<Quorum com.basho.riak.client.cap.Quorum@333b68ac>, :w #<Quorum com.basho.riak.client.cap.Quorum@5e9df8>, :allow-siblings false}
+```
 
 
-
-## What to read next
+## What To Read Next
 
 The documentation is organized as a number of guides, covering all kinds of topics.
 
@@ -93,6 +131,10 @@ We recommend that you read the following guides first, if possible, in this orde
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Welle mailing list](https://groups.google.com/forum/#!forum/clojure-riak)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Welle mailing
+list](https://groups.google.com/forum/#!forum/clojure-riak)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
