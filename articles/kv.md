@@ -25,7 +25,17 @@ Riak has several components to it but it is a key/value store at heart. You inte
 the `clojurewerkz.welle.kv` namespace. For example, `clojurewerkz.welle.kv/store` function stores objects in Riak.
 It takes a bucket name, a key and a value:
 
-{% gist 8336e8887bb37e258621 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv]))
+
+(wc/connect!)
+
+(wb/create "things")
+(kv/store "things" "a-key" (.getBytes "value"))
+```
 
 
 ### Automatic serialization (for common formats)
@@ -43,15 +53,56 @@ stored value if content type is one of
 
 Content type is passed as one of the optional arguments to the same function, `clojurewerkz.welle.kv/store`:
 
-{% gist 62b9de5d322690b7efbf %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv]))
+
+(wc/connect!)
+(wb/create "accounts")
+
+(let [key "novemberain"
+      val {:name "Michael" :age 27 :username key}]
+  (kv/store "accounts" key val :content-type "application/json; charset=UTF-8"))
+```
 
 It is common to use constants provided by the Riak Java client (that Welle uses underneath):
 
-{% gist 4d67f00b740e1fc74724 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv])
+  (:import com.basho.riak.client.http.util.Constants))
+
+(wc/connect!)
+(wb/create "accounts")
+
+(let [key "novemberain"
+      val {:name "Michael" :age 27 :username key}]
+  (kv/store "accounts" key val :content-type Constants/CTYPE_JSON_UTF8))
+```
 
 However, Riak Java client constants do not include Clojure data content type. To use it, pass "application/clojure" as the content type:
 
-{% gist 65b3f1dcdcf7ee026cf8 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv]))
+
+(wc/connect!)
+(wb/create "accounts")
+
+(let [key "novemberain"
+      val {:name "Michael" :age 27 :username key :created-at (java.util.Date.) :hacks #{"clojure" "java" "ruby" "scala" "erlang"}}]
+  ;; stores data serialized to be read by the Clojure reader, so the set and the date will be
+  ;; transparently read back when this value is fetched. Please note that to serialize and deserialize
+  ;; dates as Clojure data you will have to use Clojure 1.4+. Previous Clojure versions do not have date/instanti
+  ;; literals support in the reader.
+  (kv/store "accounts" key val :content-type "application/clojure"))
+```
 
 Serialized values will be deserialized automatically by Welle when you fetch them, as you will see later in this guide.
 
@@ -63,7 +114,7 @@ Serialized values will be deserialized automatically by Welle when you fetch the
 automatic deserialization to be skipped.
 
 
-### Main consistency/availability options
+### Main Consistency/Availability Options
 
 Riak lets you trade some availability for consistency (or vice versa) for individual requests. To do so, use the following
 options `clojurewerkz.welle.kv/store` accepts:
@@ -71,6 +122,8 @@ options `clojurewerkz.welle.kv/store` accepts:
  * `:w`: write quorum, how many replicas to write to before returning a successful response
  * `:dw`: durable write quorum, how many replicas to commit to durable storage before returning a successful response
  * `:pw`: primary write quorum, how many replicas to commit to primary nodes before returning a successful response
+ * `:resolver`: a function that takes a collection of Riak object maps and returns a single one by applying a conflict resolution logic
+ * `:retrier`: a function that takes a callable and implements a retries logic. Usually the default retrier is good enough.
 
 Default values for these options are [defined at the bucket level](/articles/buckets.html).
 
@@ -82,7 +135,21 @@ instances.
 Riak lets you associate some *metadata* with each value stored. Metadata is a map and is passed to `clojurewerkz.welle.kv/store` using
 the `:metadata` option:
 
-{% gist 0b46d804809388ceb0f3 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv])
+  (:import java.util.UUID))
+
+(wc/connect!)
+(wb/create "blobs")
+
+(let [key (str (UUID/randomUUID))
+      val (slurp "/tmp/raw/image000001.raw")]
+  ;; stores data with a piece of metadata associated with it
+  (kv/store "blobs" key val :metadata {"format" "raw"}))
+```
 
 A common example of metadata is audio, image and video files metadata. If you store file contents in Riak, it's natural to store
 file metadata information as user metadata. Other examples include document authorship and copyright information, publication date,
@@ -91,7 +158,7 @@ ISBNs and so on.
 Metadata will be transparently turned into a Clojure map when stored value is fetched, as you will see later in this guide.
 
 
-### Other options
+### Other Options
 
  * `:last-modified`: last value modification date
  * `:return-body`: should the store operation return the new data item and its metadata?
@@ -102,11 +169,28 @@ Metadata will be transparently turned into a Clojure map when stored value is fe
 
 
 
-## Fetching values
+## Fetching Values
 
 To fetch a stored value, use `clojurewerkz.welle.kv/fetch` function. In the simplest case it takes a bucket name and a key:
 
-{% gist 9978c3d0ad6c4d668885 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv])
+  (:import com.basho.riak.client.http.util.Constants))
+
+(wc/connect!)
+(wb/create "accounts")
+
+(let [bucket "accounts"
+      key    "novemberain"
+      val    {:name "Michael" :age 27 :username key}]
+  ;; stores data serialized as JSON
+  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8)
+  ;; fetches it back
+  (kv/fetch bucket key))
+```
 
 It returns *a list of values* because in an eventually consistent system like Riak it is sometimes possible that multiple
 versions of an object will be stored in a cluster. They are called [siblings](http://wiki.basho.com/Vector-Clocks.html#Siblings). We won't
@@ -116,16 +200,39 @@ a list.
 Granted, most of the time (in systems that are light on writes, almost always) the list will only contain one value. Fortunately,
 Clojure has us covered here: it is possible use positional destructuring to get the value without additional calls to `clojure.core/first`:
 
-{% gist af3dd517ea8f094a1a47 %}
+``` clojure
+;; fetch an object (possibly with siblings)
+;; here we use positional destructuring to keep the code concise and idiomatic
+(let [[val] (kv/fetch bucket key)]
+  val)
+```
 
 So if you are sure that there will be no conflicts, this practice is encouraged. Alternatively, you can use `clojurewerkz.welle.kv/fetch-one` to fetch only a single value.
 
 So far we haven't passed any arguments to `clojurewerkz.welle.kv/fetch`. In case you need to do it, it is very similar to how you do
 it when storing data:
 
-{% gist 947cda5651405cffbda6 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv])
+  (:import com.basho.riak.client.http.util.Constants))
 
-### Main consistency/availability options
+(wc/connect!)
+;; replicate values 3 times in the cluster
+(wb/create "accounts" :n-val 3)
+
+(let [bucket "accounts"
+      key    "novemberain"
+      val    {:name "Michael" :age 27 :username key}]
+  ;; stores data serialized as JSON to 2 vnodes
+  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8 :w 2)
+  ;; fetches it back, 2 vnodes must respond
+  (kv/fetch bucket key :r 2))
+```
+
+### Main Consistency/Availability Options
 
 Riak lets you trade some availability for consistency (or vice versa) for individual requests. To do so, use the following
 options `clojurewerkz.welle.kv/store` accepts:
@@ -138,11 +245,31 @@ Default values for these options are [defined at the bucket level](/articles/buc
 All quorum values can be either passed as numeric values (longs), `com.basho.riak.client.cap.Quora` or `com.basho.riak.client.cap.Quorum`
 instances:
 
-{% gist 41157189e87b56d46aa8 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv])
+  (:import com.basho.riak.client.http.util.Constants
+           com.basho.riak.client.cap.Quora))
 
+(wc/connect!)
+;; replicate values 3 times in the cluster
+(wb/create "accounts" :n-val 3)
 
-### Other options
+(let [bucket "accounts"
+      key    "novemberain"
+      val    {:name "Michael" :age 27 :username key}]
+  ;; stores data serialized as JSON to 2 vnodes
+  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8 :w 2)
+  ;; fetches it back, all vnodes must respond
+  (kv/fetch bucket key :r Quora/ALL))
+```
 
+### Other Options
+
+ * `:resolver`: a function that takes a collection of Riak object maps and returns a single one by applying a conflict resolution logic
+ * `:retrier`: a function that takes a callable and implements a retries logic. Usually the default retrier is good enough
  * `:basic-quorum` (true or false): whether to return early in some failure cases (eg. when `:r` is 1 and you get 2 errors and a success `:basic-quorum` set to true would return an error)
  * `:notfound-ok` (true or false): whether to treat notfounds as successful reads for the purposes of `:r`
  * `:vtag`: when accessing an object with siblings, [which sibling to retrieve](http://wiki.basho.com/HTTP-Fetch-Object.html#Manually-requesting-siblings)
@@ -165,10 +292,23 @@ is new in Welle `1.4.0` which uses Riak Java client `1.1.0`.
 
 To delete a value with Welle, you use `clojurewerkz.welle.kv/delete` that takes a bucket name and a key to delete:
 
-{% gist fc1c155149f8c12452a5 %}
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core    :as wc]
+            [clojurewerkz.welle.buckets :as wb]
+            [clojurewerkz.welle.kv      :as kv])
+  (:import java.util.UUID))
 
+(wc/connect!)
+(wb/create "blobs")
 
-### Main consistency/availability options
+(let [key (str (UUID/randomUUID))
+      val (slurp "/tmp/raw/image000001.raw")]
+  (kv/store "blobs" key val :metadata {"format" "raw"})
+  (kv/delete "blobs" key))
+```
+
+### Main Consistency/Availability Options
 
  * `:r`: read quorum, how many replicas need to agree when retrieving the object
  * `:pr`: primary read quorum, works like `:r` but requires that the nodes read from are not fallback nodes
@@ -182,7 +322,7 @@ Default values for these options are [defined at the bucket level](/articles/buc
 All quorum values can be either passed as numeric values (longs), `com.basho.riak.client.cap.Quora` or `com.basho.riak.client.cap.Quorum`
 instances.
 
-### Other options
+### Other Options
 
  * `:vclock`: vector clocks to use for the update
 
