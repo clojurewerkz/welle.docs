@@ -81,19 +81,6 @@ resolution that may arise.
 
 ### HTTP Cluster Client
 
-To use an HTTP cluster client, use `clojurewerkz.welle.core/connect-to-cluster-via-pb!`, which takes a list of
-HTTP URIs and works exactly like `clojurewerkz.welle.kv/connect-via-pb!`.
-
-``` clojure
-(ns welle.docs.examples
-  (:require [clojurewerkz.welle.core :as wc]))
-
-(wc/connect-to-cluster-via-pb! ["10.0.1.2", "10.0.1.3", "10.0.1.4", "10.0.1.5", "10.0.1.6"])
-```
-
-
-### Protocol Buffers Cluster Client
-
 To use an HTTP cluster client, use `clojurewerkz.welle.core/connect-to-cluster!`, which takes a list of
 HTTP URIs and works exactly like `clojurewerkz.welle.kv/connect!`.
 
@@ -104,6 +91,18 @@ HTTP URIs and works exactly like `clojurewerkz.welle.kv/connect!`.
 (wc/connect-to-cluster! ["http://10.0.1.2:8098/riak" "http://10.0.1.3:8098/riak"])
 ```
 
+
+### Protocol Buffers Cluster Client
+
+To use a Protocol Buffers cluster client, use `clojurewerkz.welle.core/connect-to-cluster-via-pb!`, which takes a list of
+HTTP URIs and works exactly like `clojurewerkz.welle.kv/connect-via-pb!`.
+
+``` clojure
+(ns welle.docs.examples
+  (:require [clojurewerkz.welle.core :as wc]))
+
+(wc/connect-to-cluster-via-pb! ["10.0.1.2", "10.0.1.3", "10.0.1.4", "10.0.1.5", "10.0.1.6"])
+```
 
 
 ## Checking Connection Health
