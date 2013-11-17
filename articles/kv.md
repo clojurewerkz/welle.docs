@@ -16,7 +16,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 1.5.
+This guide covers Welle 2.0, include development releases.
 
 
 ## Storing values
@@ -188,14 +188,24 @@ To fetch a stored value, use `clojurewerkz.welle.kv/fetch` function. In the simp
       val    {:name "Michael" :age 27 :username key}]
   ;; stores data serialized as JSON
   (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8)
-  ;; fetches it back
+  ;; returns a Riak response
   (kv/fetch bucket key))
 ```
 
-It returns *a list of values* because in an eventually consistent system like Riak it is sometimes possible that multiple
+It returns *an immutable response map* with the following keys:
+
+ * `:result`: one or more objects returned by Riak
+ * `:vclock`: vector clock of the response
+ * `:has-siblings?`: true if response has siblings
+ * `:has-value?`: true if response is non-empty
+ * `:modified?`: false when conditional GET returned a non-modified response
+ * `:deleted?`: true if this object has been deleted but there is a vclock for it
+
+To obtain a previously stored result, take `:result` from the response. Note that
+for `clojurewerkz.welle.kv/fetch` `:result` will contain a **list of values**.
+In an eventually consistent system like Riak it is sometimes possible that multiple
 versions of an object will be stored in a cluster. They are called [siblings](http://wiki.basho.com/Vector-Clocks.html#Siblings). We won't
-get into siblings and conflicts resolution in this guide, just be aware of this possibility and that `clojurewerkz.welle.kv/fetch` returns
-a list.
+get into siblings and conflicts resolution in this guide, just be aware of this possibility and that `clojurewerkz.welle.kv/fetch` returns a response where `:result` is a list.
 
 Granted, most of the time (in systems that are light on writes, almost always) the list will only contain one value. Fortunately,
 Clojure has us covered here: it is possible use positional destructuring to get the value without additional calls to `clojure.core/first`:
@@ -203,14 +213,17 @@ Clojure has us covered here: it is possible use positional destructuring to get 
 ``` clojure
 ;; fetch an object (possibly with siblings)
 ;; here we use positional destructuring to keep the code concise and idiomatic
-(let [[val] (kv/fetch bucket key)]
+(let [{:keys [result] (kv/fetch bucket key)}
+      [val] result]
   val)
 ```
 
-So if you are sure that there will be no conflicts, this practice is encouraged. Alternatively, you can use `clojurewerkz.welle.kv/fetch-one` to fetch only a single value.
+So if you are sure that there will be no conflicts, this practice is encouraged. Alternatively, you can use `clojurewerkz.welle.kv/fetch-one` to automatically get only the first value from
+the `:result`.
 
-So far we haven't passed any arguments to `clojurewerkz.welle.kv/fetch`. In case you need to do it, it is very similar to how you do
-it when storing data:
+So far we haven't passed any arguments to
+`clojurewerkz.welle.kv/fetch`. In case you need to do it, it is very
+similar to how you do it when storing data:
 
 ``` clojure
 (ns welle.docs.examples
