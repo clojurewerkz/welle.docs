@@ -85,7 +85,7 @@ Note that some properties may depend on your Riak cluster configuration, transpo
 
 ## How To List Buckets
 
-Use `clojurewerkz.welle.buckets/update` function. It takes no arguments and returns a set of strings (bucket names in the cluster):
+Use `clojurewerkz.welle.buckets/list` function. It takes no arguments and returns a set of strings (bucket names in the cluster):
 
 ``` clojure
 (ns welle.docs.examples
