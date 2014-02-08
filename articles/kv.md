@@ -364,7 +364,16 @@ siblings and return a collection of Riak object maps.
 Resolvers can be created using
 `clojurewerkz.welle.conversion/resolver-from` which takes a function that accepts a collection
 of deserialized (unless `fetch` was told otherwise) values and applies any conflict resolution
-logic necessary.
+logic necessary, returning a single object:
+
+``` clojure
+(require '[clojurewerkz.welle.conversion  :as cnv])
+
+;; a resolver that always picks the first value
+(cnv/resolver-from
+  (fn [siblings]
+    (first siblings)))
+```
 
 `clojurewerkz.welle.kv/fetch-one` now also supports resolvers via the `:resolver` option.
 It will raise an exception if siblings are detected and no resolver is provided.
