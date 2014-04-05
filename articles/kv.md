@@ -104,14 +104,16 @@ However, Riak Java client constants do not include Clojure data content type. To
   (kv/store "accounts" key val :content-type "application/clojure"))
 ```
 
-Serialized values will be deserialized automatically by Welle when you fetch them, as you will see later in this guide.
+Serialized values will be deserialized automatically by Welle when you
+fetch them, as you will see later in this guide.
 
 
 
 ### Skipping Automatic Deserialization
 
-`clojurewerkz.welle.kv/fetch` supports a new boolean option `:skip-deserialize` that allows
-automatic deserialization to be skipped.
+`clojurewerkz.welle.kv/fetch` supports a new boolean option
+`:skip-deserialize` that allows automatic deserialization to be
+skipped.
 
 
 ### Main Consistency/Availability Options
@@ -201,25 +203,33 @@ It returns *an immutable response map* with the following keys:
  * `:modified?`: false when conditional GET returned a non-modified response
  * `:deleted?`: true if this object has been deleted but there is a vclock for it
 
-To obtain a previously stored result, take `:result` from the response. Note that
-for `clojurewerkz.welle.kv/fetch` `:result` will contain a **list of values**.
-In an eventually consistent system like Riak it is sometimes possible that multiple
-versions of an object will be stored in a cluster. They are called [siblings](http://wiki.basho.com/Vector-Clocks.html#Siblings). We won't
-get into siblings and conflicts resolution in this guide, just be aware of this possibility and that `clojurewerkz.welle.kv/fetch` returns a response where `:result` is a list.
+To obtain a previously stored result, take `:result` from the
+response. Note that for `clojurewerkz.welle.kv/fetch` `:result` will
+contain a **list of values**.  In an eventually consistent system like
+Riak it is sometimes possible that multiple versions of an object will
+be stored in a cluster. They are called
+[siblings](http://wiki.basho.com/Vector-Clocks.html#Siblings). We
+won't get into siblings and conflicts resolution in this guide, just
+be aware of this possibility and that `clojurewerkz.welle.kv/fetch`
+returns a response where `:result` is a list.
 
-Granted, most of the time (in systems that are light on writes, almost always) the list will only contain one value. Fortunately,
-Clojure has us covered here: it is possible use positional destructuring to get the value without additional calls to `clojure.core/first`:
+Granted, most of the time (in systems that are light on writes, almost
+always) the list will only contain one value. Fortunately, Clojure has
+us covered here: it is possible use positional destructuring to get
+the value without additional calls to `clojure.core/first`:
 
 ``` clojure
 ;; fetch an object (possibly with siblings)
 ;; here we use positional destructuring to keep the code concise and idiomatic
 (let [{:keys [result] (kv/fetch bucket key)}
-      [val] result]
+      [val]           result]
   val)
 ```
 
-So if you are sure that there will be no conflicts, this practice is encouraged. Alternatively, you can use `clojurewerkz.welle.kv/fetch-one` to automatically get only the first value from
-the `:result`.
+So if you are sure that there will be no conflicts, this practice is
+encouraged. Alternatively, you can use
+`clojurewerkz.welle.kv/fetch-one` to automatically get only the first
+value from the `:result`.
 
 So far we haven't passed any arguments to
 `clojurewerkz.welle.kv/fetch`. In case you need to do it, it is very
