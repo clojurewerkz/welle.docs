@@ -43,8 +43,8 @@ Welle is built from the ground up for Clojure 1.3 and later.
 
 ## Supported Riak versions
 
-Welle currently uses Riak Java driver 1.0.x under the hood and thus supports Riak 1.0 and later versions. Please note that some
-features may be specific to Riak 1.1, 1.2 or later versions.
+Welle supports Riak 1.4 and later versions. Please note that some
+features may be specific to Riak 1.4 or later versions.
 
 Welle `1.4.0` is compatible with Riak `1.3.0`.
 
