@@ -309,7 +309,7 @@ the value without additional calls to `clojure.core/first`:
 ``` clojure
 ;; fetch an object (possibly with siblings)
 ;; here we use positional destructuring to keep the code concise and idiomatic
-(let [{:keys [result]} (kv/fetch bucket key)
+(let [{:keys [result]} (kv/fetch conn bucket key)
       [val]            result]
   val)
 ```
