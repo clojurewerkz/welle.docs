@@ -261,7 +261,7 @@ fetch them, as you will see later in this guide.
 ## Fetching Values
 
 To fetch a stored value, use `clojurewerkz.welle.kv/fetch`
-function. In the simplest case it takes a connect, bucket name, and
+function. In the simplest case it takes a connection, bucket name, and
 key:
 
 ``` clojure
