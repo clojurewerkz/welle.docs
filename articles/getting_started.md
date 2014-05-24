@@ -123,10 +123,9 @@ you only pass it the name of the bucket:
   (:require [clojurewerkz.welle.core :as wc]
             [clojurewerkz.welle.buckets :as wb]))
 
-(wc/connect!)
-
-;; creates a new bucket with default properties
-(wb/create "things")
+(let [conn (wc/connect)]
+  ;; creates a new bucket with default properties
+  (wb/create conn "things"))
 ```
 
 Riak buckets have properties. In the example above, we rely on all defaults. In many cases, you will want to tweak bucket properties.
@@ -137,10 +136,9 @@ To do so, pass additional arguments to `clojurewerkz.welle.buckets/update`, like
   (:require [clojurewerkz.welle.core :as wc]
             [clojurewerkz.welle.buckets :as wb]))
 
-(wc/connect!)
-
-;; creates a new bucket with properties explicitly specified
-(wb/create "accounts" :n-val 5)
+(let [conn (wc/connect)]
+  ;; creates a new bucket with properties explicitly specified
+  (wb/create conn "accounts" :n-val 5))
 ```
 
 in the example above we instruct Riak to replicate all objects stored in the bucket "accounts" to 5 nodes (because accounts are
