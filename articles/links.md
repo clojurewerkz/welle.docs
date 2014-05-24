@@ -11,7 +11,10 @@ This guide covers:
  * Storing links with values
  * Link walking
 
-This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/welle.docs).
+This work is licensed under a <a rel="license"
+href="http://creativecommons.org/licenses/by/3.0/">Creative Commons
+Attribution 3.0 Unported License</a> (including images &
+stylesheets). The source is available [on Github](https://github.com/clojurewerkz/welle.docs).
 
 
 ## What Version of Welle Does This Guide Cover?
@@ -21,41 +24,48 @@ This guide covers Welle 2.0, including development releases.
 
 ## Introduction
 
-[Riak Links](http://wiki.basho.com/Links.html) are metadata that establish one-way relationships between objects in Riak. They can be used to loosely model graph like
-relationships between objects in Riak.
+[Riak Links](http://docs.basho.com/riak/latest/theory/concepts/Links/) are metadata that
+establish one-way relationships between objects in Riak. They can be
+used to loosely model graph like relationships between objects in
+Riak.
 
-Much like [secondary indexes](/2i.html), links are specified à la carte, when a value is stored. It is then possible to traverse links (a process known as
-**link walking**) to collect related values.
+Much like [secondary indexes](/2i.html), links are specified à la
+carte, when a value is stored. It is then possible to traverse links
+(a process known as **link walking**) to collect related values.
 
 
 ## Storing Links With Values
 
-Links are specified using the `:links` option of `clojurewerkz.welle.kv/store` function. Each link is a map with three keys:
+Links are specified using the `:links` option of
+`clojurewerkz.welle.kv/store` function. Each link is a map with three
+keys:
 
 ``` clojure
 {:bucket "people" :key "joe" :tag "friend"}
 ```
 
-Bucket and key identify the value being referenced. Tag is a kind of relationship (some graph databases call it **relationship type**)
+Bucket and key identify the value being referenced. Tag is a kind of
+relationship (some graph databases call it **relationship type**)
 
-In the following example, we create a `friend` link to express friendship between two people:
+In the following example, we create a `friend` link to express
+friendship between two people:
 
 ``` clojure
-(kv/store "people" "joe" {:name "Joe" :age 30} :content-type "application/clojure")
-(kv/store "people" "jane" {:name "Jane" :age 32}
-          :content-type "application/clojure"
-          :links [{:bucket bucket-name :key "joe" :tag "friend"}])
+(kv/store conn "people" "joe" {:name "Joe" :age 30} {:content-type "application/clojure"})
+(kv/store conn "people" "jane" {:name "Jane" :age 32}
+          {:content-type "application/clojure"
+           :links [{:bucket bucket-name :key "joe" :tag "friend"}]})
 ```
-
 
 
 ## Link Walking
 
-To traverse a sequence links, use link walking DSL functions from the `clojurewerkz.welle.links` namespace:
+To traverse a sequence links, use link walking DSL functions from the
+`clojurewerkz.welle.links` namespace:
 
 ``` clojure
 (ns my.app
-  (:use clojurewerkz.welle.links))
+  (:require [clojurewerkz.welle.links :refer :all]))
 
 ;; finding friends
 (walk
@@ -63,20 +73,26 @@ To traverse a sequence links, use link walking DSL functions from the `clojurewe
   (step     "people" "friend" true))
 ```
 
-The `walk` function takes traversal starting point (specified here using the `clojurewerkz.welle.links/start-at` function) as the first argument and one or more steps as
-remaining arguments. Each step is specified using the `clojurewerkz.welle.links/step` function and consists of
+The `walk` function takes traversal starting point (specified here
+using the `clojurewerkz.welle.links/start-at` function) as the first
+argument and one or more steps as remaining arguments. Each step is
+specified using the `clojurewerkz.welle.links/step` function and
+consists of
 
  * A bucket name
  * A link tag to use
  * Accumulator flag
 
-If the accumulator flag is true, values found at the given step will be included in the end result. In our example above we want to find friends of
-a particular person so we set the flag to `true`. If we wanted to find friends of friends of the person instead, we would use two steps and only included
-values found during the last step into the final result set:
+If the accumulator flag is true, values found at the given step will
+be included in the end result. In our example above we want to find
+friends of a particular person so we set the flag to `true`. If we
+wanted to find friends of friends of the person instead, we would use
+two steps and only included values found during the last step into the
+final result set:
 
 ``` clojure
 (ns my.app
-  (:use clojurewerkz.welle.links))
+  (:require [clojurewerkz.welle.links :refer :all]))
 
 ;; finding friends of friends
 (walk
@@ -88,10 +104,11 @@ values found during the last step into the final result set:
 
 ## Wrapping Up
 
-While Riak is not a graph database like [Neo4J](http://neo4j.org) or [Titan](http://thinkaurelius.github.com/titan/),
-links can cover many common scenarios, such as articles and comments
-or events and participants (when there are reasons to not denormalize
-associated values into the parent).
+While Riak is not a graph database like [Neo4J](http://neo4j.org) or
+[Titan](http://thinkaurelius.github.com/titan/), links can cover many
+common scenarios, such as articles and comments or events and
+participants (when there are reasons to not denormalize associated
+values into the parent).
 
 
 ## What to read next
