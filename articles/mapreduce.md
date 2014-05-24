@@ -10,31 +10,41 @@ This guide covers:
  * What is map/reduce
  * Performing Map/reduce queries with Welle
 
-This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/welle.docs).
+This work is licensed under a <a rel="license"
+href="http://creativecommons.org/licenses/by/3.0/">Creative Commons
+Attribution 3.0 Unported License</a> (including images &
+stylesheets). The source is available [on Github](https://github.com/clojurewerkz/welle.docs).
 
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 2.0, including development releases.
+This guide covers Welle 3.0, including development releases.
 
 
 ## Introduction
 
-Riak’s primary querying and data-processing system is an implementation of the MapReduce programming paradigm [popularized by Google](http://labs.google.com/papers/mapreduce.html).
-Key-value stores like Riak generally have very little functionality beyond just storing and fetching values.
-MapReduce adds the capability to perform more powerful queries over the data stored in Riak.
+Riak’s primary querying and data-processing system is an
+implementation of the MapReduce programming paradigm [popularized by
+Google](http://labs.google.com/papers/mapreduce.html).  Key-value
+stores like Riak generally have very little functionality beyond just
+storing and fetching values.  MapReduce adds the capability to perform
+more powerful queries over the data stored in Riak.
 
-Riak Map/reduce queries consist of *a list of inputs* and multiple *phases* that can be written in JavaScript or Erlang. They can either be stored in Riak buckets or
-passed from the client. Riak also provides several built-in functions for common operations. Results from one
-phase are piped into subsequent phases. Results from each phase may be accumulated into the final result or just used
-as input for the next phase.
+Riak Map/reduce queries consist of *a list of inputs* and multiple
+*phases* that can be written in JavaScript or Erlang. They can either
+be stored in Riak buckets or passed from the client. Riak also
+provides several built-in functions for common operations. Results
+from one phase are piped into subsequent phases. Results from each
+phase may be accumulated into the final result or just used as input
+for the next phase.
 
-You can learn more about map/reduce inputs and phases in the [Riak documentation on map/reduce](http://wiki.basho.com/MapReduce.html).
+You can learn more about map/reduce inputs and phases in the [Riak documentation on map/reduce](http://docs.basho.com/riak/latest/dev/using/mapreduce/).
 
 
 ## Performing Map/reduce Queries
 
-Map/reduce queries are performed using the `clojurewerkz.welle.mr/map-reduce` function:
+Map/reduce queries are performed using the
+`clojurewerkz.welle.mr/map-reduce` function:
 
 ``` clojure
 (ns my.service
@@ -42,10 +52,9 @@ Map/reduce queries are performed using the `clojurewerkz.welle.mr/map-reduce` fu
             [clojurewerkz.welle.mr   :as mr]
             [clojurewerkz.support.js :as js]))
 
-(wc/connect!)
-
-(let [result (mr/map-reduce {:inputs "things"
-                                 :query [{:map {:language "erlang"
+(let [conn   (wc/connect)
+      result (mr/map-reduce conn {:inputs "things"
+                                  :query [{:map {:language "erlang"
                                                :module   "riak_kv_mapreduce"
                                                :function "map_object_value",
                                                :keep false}}
@@ -58,9 +67,12 @@ Map/reduce queries are performed using the `clojurewerkz.welle.mr/map-reduce` fu
       (comment "…"))
 ```
 
-This query takes a bunch of numbers stored in a bucket as strings of text and computes the sum of them.
+This query takes a bunch of numbers stored in a bucket as strings of
+text and computes the sum of them.
 
-Map/reduce queries consist of one or more map and reduce *phases*. Lets take a look at one of the phases from the example above:
+Map/reduce queries consist of one or more map and reduce
+*phases*. Lets take a look at one of the phases from the example
+above:
 
 ``` clojure
 {:map {:language "erlang"
@@ -69,10 +81,13 @@ Map/reduce queries consist of one or more map and reduce *phases*. Lets take a l
        :keep false}}
 ```
 
-This is a *map phase* that uses a built-in Erlang function called `map_object_value` in the `riak_kv_mapreduce` module (namespace). We instruct Riak to
-not accumulate results from this phase, so mapped values won't appear in the final result.
+This is a *map phase* that uses a built-in Erlang function called
+`map_object_value` in the `riak_kv_mapreduce` module (namespace). We
+instruct Riak to not accumulate results from this phase, so mapped
+values won't appear in the final result.
 
-Next we have two *reduce phases* using one built-in Erlang and one built-in JavaScript functions:
+Next we have two *reduce phases* using one built-in Erlang and one
+built-in JavaScript functions:
 
 ``` clojure
 {:reduce {:language "erlang"
@@ -87,7 +102,8 @@ Final result returned by the `Riak.reduceSum` function is returned to the client
 
 ## Inputs
 
-The Map/Reduce function accepts inputs in multiple formats (note that Welle does not modify them, they are passed as is to Riak):
+The Map/Reduce function accepts inputs in multiple formats (note that
+Welle does not modify them, they are passed as is to Riak):
 
  * A bucket name
  * A pair of [bucket, key] (typically using a vector)
@@ -102,10 +118,14 @@ It is possible to pipe results of a secondary indexes query to Map/Reduce.
 
 ### Key Filters
 
-[Key Filters](http://wiki.basho.com/Key-Filters.html) is a pipeline (a sequence of predicate functions) that filters keys before piping them to
-a Map/Reduce query. Examining the key will not result in the entire object loaded, so this is a very efficient way to separate keys
-that match a specific pattern (or multiple patterns). Key filters work especially well when application uses "smart" (with information encoded
-in them) keys instead of random unique strings.
+[Key Filters](http://docs.basho.com/riak/latest/dev/using/keyfilters/)
+is a pipeline (a sequence of predicate functions) that filters keys
+before piping them to a Map/Reduce query. Examining the key will not
+result in the entire object loaded, so this is a very efficient way to
+separate keys that match a specific pattern (or multiple
+patterns). Key filters work especially well when application uses
+"smart" (with information encoded in them) keys instead of random
+unique strings.
 
 
 ## Wrapping Up
@@ -122,7 +142,8 @@ Welle developers and community gain more real world usage experience.
 
 ## What to Read Next
 
-The documentation is organized as a number of guides, covering all kinds of topics.
+The documentation is organized as a number of guides, covering all
+kinds of topics.
 
 We recommend that you read [Integration with 3rd party libraries](/articles/integration.html) next.
 
