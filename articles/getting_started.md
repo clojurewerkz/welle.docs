@@ -275,7 +275,7 @@ key:
       bucket "accounts"
       key    "novemberain"
       val    {:name "Michael" :age 27 :username key}]
-  (wb/create conn "accounts")
+  (wb/create conn bucket)
   ;; stores data serialized as JSON
   (kv/store conn bucket key val {:content-type Constants/CTYPE_JSON_UTF8})
   ;; fetches it back
