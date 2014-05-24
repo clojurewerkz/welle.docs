@@ -14,7 +14,10 @@ It should take about 10 minutes to read and study the provided code examples. Th
  * Basic operations (creating buckets, storing and fetching objects, index queries, using map/reduce)
  * Overview of how Welle automatic serialization works
 
-This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/welle.docs).
+This work is licensed under a <a rel="license"
+href="http://creativecommons.org/licenses/by/3.0/">Creative Commons
+Attribution 3.0 Unported License</a> (including images &
+stylesheets). The source is available [on GitHub](https://github.com/clojurewerkz/welle.docs).
 
 
 ## What version of Welle does this guide cover?
@@ -24,24 +27,30 @@ This guide covers Welle 2.0, including development releases.
 
 ## Welle Overview
 
-Welle is an idiomatic Clojure client for Riak. It is simple and easy to use, strives to support
-every Riak 1.0+ feature, has next to no performance overhead compared to the official Java client and is well maintained.
+Welle is an idiomatic Clojure client for Riak. It is simple and easy
+to use, strives to support every Riak 1.0+ feature, has next to no
+performance overhead compared to the official Java client and is well
+maintained.
 
 
 ### What Welle is not
 
-Welle is not a replacement for the Riak Java client, instead, Welle is symbiotic with it. Welle does not try to offer
-object/document mapping functionality or introduce abstractions on top of what Clojure and Riak have. With Welle, you work with native
-Clojure and Java data structures like maps, vectors, strings, dates and so on. This approach has pros and cons but (we believe) closely follows
-Clojure's philosophy of reducing incidental complexity. It also fits key/value data model of Riak very well.
+Welle is not a replacement for the Riak Java client, instead, Welle is
+symbiotic with it. Welle does not try to offer object/document mapping
+functionality or introduce abstractions on top of what Clojure and
+Riak have. With Welle, you work with native Clojure and Java data
+structures like maps, vectors, strings, dates and so on. This approach
+has pros and cons but (we believe) closely follows Clojure's
+philosophy of reducing incidental complexity. It also fits key/value
+data model of Riak very well.
 
 
-## Supported Clojure versions
+## Supported Clojure Versions
 
-Welle is built from the ground up for Clojure 1.3 and later.
+Welle requires Clojure 1.4+.
 
 
-## Supported Riak versions
+## Supported Riak Versions
 
 Welle supports Riak 1.4 and later versions. Please note that some
 features may be specific to Riak 1.4 or later versions.
@@ -55,7 +64,7 @@ Welle artifacts are [released to Clojars](https://clojars.org/com.novemberain/we
 
 ### With Leiningen
 
-    [com.novemberain/welle "2.0.0"]
+    [com.novemberain/welle "3.0.0-rc1"]
 
 ### With Maven
 
@@ -74,44 +83,48 @@ And then the dependency:
 <dependency>
   <groupId>com.novemberain</groupId>
   <artifactId>welle</artifactId>
-  <version>2.0.0</version>
+  <version>3.0.0-rc</version>
 </dependency>
 ```
 
-It is recommended to stay up-to-date with new versions. New releases and important changes are announced [@ClojureWerkz](http://twitter.com/ClojureWerkz).
+It is recommended to stay up-to-date with new versions. New releases
+and important changes are announced
+[@ClojureWerkz](http://twitter.com/ClojureWerkz).
 
 
 ## Connecting to Riak
 
-Riak and Welle support two transports: HTTP and Protocol Buffers. They vary in performance characteristics and supported features (PBC API supports
-searcn and secondary indexes starting with Riak 1.2). For the purpose of this guide we will concentrate on the HTTP transport. This is what most applications use
-and it delivers pretty good performance most applications will be satisfied with.
+Riak and Welle support two transports: HTTP and Protocol Buffers. They
+vary in performance characteristics and supported features (PBC API
+supports searcn and secondary indexes starting with Riak 1.2). For the
+purpose of this guide we will concentrate on the HTTP transport. This
+is what most applications use and it delivers pretty good performance
+most applications will be satisfied with.
 
 ### Using HTTP transport
 
-`clojurewerkz.welle.core/connect!` function connects to Riak using HTTP transport and sets up the default client. You can invoke it in
-three ways:
+`clojurewerkz.welle.core/connect` function sets up a connection to
+Riak using HTTP transport and returns it. You can invoke it in three
+ways:
 
 ``` clojure
 (ns welle.docs.examples
   (:require [clojurewerkz.welle.core :as wc]))
 
 ;; connects to a Riak node at http://127.0.0.1:8098/riak
-(wc/connect!)
+(wc/connect)
 
 ;; connects to a Riak node at the given endpoint, client id will be generated
-(wc/connect! "http://riak.data.megacorp.internal:8098/riak")
+(wc/connect "http://riak.data.megacorp.internal:8098/riak")
 
 ;; the same as the previous example but also uses provided client id
-(wc/connect! "http://riak.data.megacorp.internal:8098/riak" "myapp-client.0001")
+(wc/connect "http://riak.data.megacorp.internal:8098/riak" "myapp-client.0001")
 ```
 
-It is very common to use the 0-arity (first example) in development
-and the 1-arity (second example) for QA and production environments.
+It is very common to use the 1-arity (first example) in development
+and the 2-arity (second example) for QA and production environments.
 Most of the time, relying on client id to be generated by Welle is
-sufficient. You can learn more about [client ids and how they are used
-by
-Riak](http://docs.basho.com/riak/latest/references/appendices/concepts/Vector-Clocks/)
+sufficient. You can learn more about [client ids and how they are used by Riak](http://docs.basho.com/riak/latest/references/appendices/concepts/Vector-Clocks/)
 for conflict detection and resolution in the Riak documentation.
 
 
@@ -145,19 +158,23 @@ To do so, pass additional arguments to `clojurewerkz.welle.buckets/update`, like
 
 (let [conn (wc/connect)]
   ;; creates a new bucket with properties explicitly specified
-  (wb/create conn "accounts" :n-val 5))
+  (wb/create conn "accounts" {:n-val 5}))
 ```
 
-in the example above we instruct Riak to replicate all objects stored in the bucket "accounts" to 5 nodes (because accounts are
-valuable information we absolutely don't want to lose).
+in the example above we instruct Riak to replicate all objects stored
+in the bucket "accounts" to 5 nodes (because accounts are valuable
+information we absolutely don't want to lose).
 
 
 ## Storing Values
 
-Besides showing off impressive benchmarks and striving to handle [Web Scale](http://www.youtube.com/watch?v=b2F-DItXtZs), the primary purpose of data stores like Riak
-is to store data.
-Riak has several components to it but it is a key/value store at heart. You interact with it using functions in the `clojurewerkz.welle.kv` namespace. For example,
-`clojurewerkz.welle.kv/store` function stores objects in Riak. It takes a bucket name, a key and a value:
+Besides showing off impressive benchmarks and striving to handle [Web
+Scale](http://www.youtube.com/watch?v=b2F-DItXtZs), the primary
+purpose of data stores like Riak is to store data.  Riak has several
+components to it but it is a key/value store at heart. You interact
+with it using functions in the `clojurewerkz.welle.kv` namespace. For
+example, `clojurewerkz.welle.kv/store` function stores objects in
+Riak. It takes a connection, bucket name, key and value:
 
 ``` clojure
 (ns welle.docs.examples
@@ -165,10 +182,10 @@ Riak has several components to it but it is a key/value store at heart. You inte
             [clojurewerkz.welle.buckets :as wb]
             [clojurewerkz.welle.kv      :as kv]))
 
-(wc/connect!)
-
-(wb/create "things")
-(kv/store "things" "a-key" (.getBytes "value"))
+(let [conn   (wc/connect)
+      bucket "things"]
+  (wb/create conn bucket)
+  (kv/store  conn bucket "a-key" (.getBytes "value")))
 ```
 
 In the example above we store some data as bytes: Riak is content agnostic and will happily store whatever you throw at it. However, most applications
@@ -189,12 +206,12 @@ Content type is passed as one of the optional arguments to the same function, `c
             [clojurewerkz.welle.buckets :as wb]
             [clojurewerkz.welle.kv      :as kv]))
 
-(wc/connect!)
-(wb/create "accounts")
-
-(let [key "novemberain"
-      val {:name "Michael" :age 27 :username key}]
-  (kv/store "accounts" key val :content-type "application/json; charset=UTF-8"))
+(let [conn   (wc/connect)
+      bucket "accounts"
+      key    "novemberain"
+      val    {:name "Michael" :age 27 :username key}]
+  (wb/create conn bucket)
+  (kv/store  conn bucket key val {:content-type "application/json; charset=UTF-8"}))
 ```
 
 Often you will want to use constants provided by the Riak Java client (that Welle uses underneath):
@@ -206,15 +223,17 @@ Often you will want to use constants provided by the Riak Java client (that Well
             [clojurewerkz.welle.kv      :as kv])
   (:import com.basho.riak.client.http.util.Constants))
 
-(wc/connect!)
-(wb/create "accounts")
-
-(let [key "novemberain"
-      val {:name "Michael" :age 27 :username key}]
-  (kv/store "accounts" key val :content-type Constants/CTYPE_JSON_UTF8))
+(let [conn   (wc/connect)
+      bucket "accounts"
+      key    "novemberain"
+      val    {:name "Michael" :age 27 :username key}]
+  (wb/create conn bucket)
+  (kv/store  conn bucket key val {:content-type Constants/CTYPE_JSON_UTF8}))
 ```
 
-However, Riak Java client constants do not include Clojure data content type. To use it, pass "application/clojure" as the content type:
+However, Riak Java client constants do not include Clojure data
+content type. To use it, pass "application/clojure" as the content
+type:
 
 ``` clojure
 (ns welle.docs.examples
@@ -222,25 +241,28 @@ However, Riak Java client constants do not include Clojure data content type. To
             [clojurewerkz.welle.buckets :as wb]
             [clojurewerkz.welle.kv      :as kv]))
 
-(wc/connect!)
-(wb/create "accounts")
-
-(let [key "novemberain"
-      val {:name "Michael" :age 27 :username key :created-at (java.util.Date.) :hacks #{"clojure" "java" "ruby" "scala" "erlang"}}]
+(let [conn   (wc/connect)
+      bucket "accounts"
+      key    "novemberain"
+      val    {:name "Michael" :age 27 :username key :created-at (java.util.Date.) :hacks #{"clojure" "java" "ruby" "scala" "erlang"}}]
+  (wb/create conn bucket)
   ;; stores data serialized to be read by the Clojure reader, so the set and the date will be
   ;; transparently read back when this value is fetched. Please note that to serialize and deserialize
   ;; dates as Clojure data you will have to use Clojure 1.4+. Previous Clojure versions do not have date/instanti
   ;; literals support in the reader.
-  (kv/store "accounts" key val :content-type "application/clojure"))
+  (kv/store conn bucket key val {:content-type "application/clojure"}))
 ```
 
-Serialized values will be deserialized automatically by Welle when you fetch them, as you will see later in this guide.
+Serialized values will be deserialized automatically by Welle when you
+fetch them, as you will see later in this guide.
 
 
 
 ## Fetching Values
 
-To fetch a stored value, use `clojurewerkz.welle.kv/fetch` function. In the simplest case it takes a bucket name and a key:
+To fetch a stored value, use `clojurewerkz.welle.kv/fetch`
+function. In the simplest case it takes a connect, bucket name, and
+key:
 
 ``` clojure
 (ns welle.docs.examples
@@ -249,16 +271,15 @@ To fetch a stored value, use `clojurewerkz.welle.kv/fetch` function. In the simp
             [clojurewerkz.welle.kv      :as kv])
   (:import com.basho.riak.client.http.util.Constants))
 
-(wc/connect!)
-(wb/create "accounts")
-
-(let [bucket "accounts"
+(let [conn   (wc/connect)
+      bucket "accounts"
       key    "novemberain"
       val    {:name "Michael" :age 27 :username key}]
+  (wb/create conn "accounts")
   ;; stores data serialized as JSON
-  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8)
+  (kv/store conn bucket key val {:content-type Constants/CTYPE_JSON_UTF8})
   ;; fetches it back
-  (kv/fetch bucket key))
+  (kv/fetch conn bucket key))
 ```
 
 It returns *an immutable response map* with the following keys:
@@ -298,8 +319,9 @@ encouraged. Alternatively, you can use
 `clojurewerkz.welle.kv/fetch-one` to automatically get only the first
 value from the `:result`.
 
-So far we haven't passed any arguments to `clojurewerkz.welle.kv/fetch`. In case you need to do it, it is very similar to how you do
-it when storing data:
+So far we haven't passed any options to
+`clojurewerkz.welle.kv/fetch`. In case you need to do it, it is very
+similar to how you do it when storing data:
 
 ``` clojure
 (ns welle.docs.examples
@@ -308,17 +330,16 @@ it when storing data:
             [clojurewerkz.welle.kv      :as kv])
   (:import com.basho.riak.client.http.util.Constants))
 
-(wc/connect!)
 ;; replicate values 3 times in the cluster
-(wb/create "accounts" :n-val 3)
-
-(let [bucket "accounts"
+(let [conn   (wc/connect)
+      bucket "accounts"
       key    "novemberain"
       val    {:name "Michael" :age 27 :username key}]
+  (wb/create conn bucket {:n-val 3})
   ;; stores data serialized as JSON to 2 vnodes
-  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8 :w 2)
+  (kv/store conn bucket key val :content-type Constants/CTYPE_JSON_UTF8 :w 2)
   ;; fetches it back, 2 vnodes must respond
-  (kv/fetch bucket key :r 2))
+  (kv/fetch conn bucket key {:r 2}))
 ```
 
 For those familiar with the Riak Java client, quorum values can be
@@ -333,24 +354,25 @@ passed as `com.basho.riak.client.cap.Quora` and
   (:import com.basho.riak.client.http.util.Constants
            com.basho.riak.client.cap.Quora))
 
-(wc/connect!)
-;; replicate values 3 times in the cluster
-(wb/create "accounts" :n-val 3)
-
-(let [bucket "accounts"
+(let [conn   (wc/connect)
+      bucket "accounts"
       key    "novemberain"
       val    {:name "Michael" :age 27 :username key}]
+  ;; replicate values 3 times in the cluster
+  (wb/create conn bucket {:n-val 3})
   ;; stores data serialized as JSON to 2 vnodes
-  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8 :w 2)
+  (kv/store conn bucket key val {:content-type Constants/CTYPE_JSON_UTF8 :w 2})
   ;; fetches it back, all vnodes must respond
-  (kv/fetch bucket key :r Quora/ALL))
+  (kv/fetch conn bucket key {:r Quora/ALL}))
 ```
 
 
 ## Using Secondary Indexes (2i)
 
-Fetching data by key may get you quite far if you are smart about choose keys but often it is more convenient to use secondary indexes to
-query your data. Secondary indexes (often referred to as 2i) have two sides to them:
+Fetching data by key may get you quite far if you are smart about
+choose keys but often it is more convenient to use secondary indexes
+to query your data. Secondary indexes (often referred to as 2i) have
+two sides to them:
 
  * Indexing data
  * Querying
@@ -364,26 +386,30 @@ With Riak, you specify indexes and index values when storing values using the `:
             [clojurewerkz.welle.kv      :as kv])
   (:import com.basho.riak.client.http.util.Constants))
 
-(wc/connect!)
-(wb/create "accounts")
-
-(let [bucket "accounts"
+(let [conn   (wc/connect)
+      bucket "accounts"
       key    "novemberain"
       val    {:name "Michael" :age 27 :username key}]
+  (wb/create conn bucket)
   ;; stores the value and adds it to two secondary indexes: username and age
-  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8 :indexes {:username #{username} :age 27}))
+  (kv/store conn bucket key val {:content-type Constants/CTYPE_JSON_UTF8 :indexes {:username #{username} :age 27}}))
 ```
 
-Each value may have its own set of indexes. There is no predefined set of indexes, like with some other data stores (for example, PostgreSQL).
-If index values are specified for an object, Riak will index the value and distribute information about the new index entry in the cluster.
-Please note that string indexes need to be passed as sets (and may contain multiple values).
+Each value may have its own set of indexes. There is no predefined set
+of indexes, like with some other data stores (for example,
+PostgreSQL).  If index values are specified for an object, Riak will
+index the value and distribute information about the new index entry
+in the cluster.  Please note that string indexes need to be passed as
+sets (and may contain multiple values).
 
 
 
 ## Secondary Index (2i) Queries
 
-Once you have some objects stored and indexed, lets take a look how to perform 2i queries with Welle. `clojurewerkz.welle.kv` namespace
-provides a function to do it, `index-query`. It is used similarly to `clojurewerkz.welle.kv/fetch`:
+Once you have some objects stored and indexed, lets take a look how to
+perform 2i queries with Welle. `clojurewerkz.welle.kv` namespace
+provides a function to do it, `index-query`. It is used similarly to
+`clojurewerkz.welle.kv/fetch`:
 
 ``` clojure
 (ns welle.docs.examples
@@ -392,23 +418,25 @@ provides a function to do it, `index-query`. It is used similarly to `clojurewer
             [clojurewerkz.welle.kv      :as kv])
   (:import com.basho.riak.client.http.util.Constants))
 
-(wc/connect!)
-(wb/create "accounts")
-
-(let [bucket "accounts"
+(let [conn   (wc/connect)
+      bucket "accounts"
       key    "novemberain"
       val    {:name "Michael" :age 27 :username key}]
+  (wb/create conn bucket)
   ;; stores the value and adds it to two secondary indexes: username and age
-  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8 :indexes {:username #{username} :age 27})
+  (kv/store conn bucket key val {:content-type Constants/CTYPE_JSON_UTF8 :indexes {:username #{username} :age 27}})
   ;; perform a 2i query on the username
-  (kv/index-query bucket :username username))
+  (kv/index-query conn bucket :username username))
 ```
 
-You pass it the name of the index to use and a value. Welle will return you a list of keys that you can then fetch, combine with
-a list of keys returned by another index query or use with map/reduce.
+You pass it the name of the index to use and a value. Welle will
+return you a list of keys that you can then fetch, combine with a list
+of keys returned by another index query or use with map/reduce.
 
-Riak also supports range queries. In the example used throughout this guide we index a user's age. To get a list of keys of objects
-with ages between 25 and 30, pass a pair (typically as a vector, so `[25 30]`) for index value:
+Riak also supports range queries. In the example used throughout this
+guide we index a user's age. To get a list of keys of objects with
+ages between 25 and 30, pass a pair (typically as a vector, so `[25
+30]`) for index value:
 
 ``` clojure
 (ns welle.docs.examples
@@ -417,23 +445,23 @@ with ages between 25 and 30, pass a pair (typically as a vector, so `[25 30]`) f
             [clojurewerkz.welle.kv      :as kv])
   (:import com.basho.riak.client.http.util.Constants))
 
-(wc/connect!)
-(wb/create "accounts")
-
-(let [bucket "accounts"
+(let [conn   (wc/connect)
+      bucket "accounts"
       key    "novemberain"
       val    {:name "Michael" :age 27 :username key}]
+  (wb/create conn bucket)
   ;; stores the value and adds it to two secondary indexes: username and age
-  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8 :indexes {:username #{username} :age 27})
+  (kv/store conn bucket key val {:content-type Constants/CTYPE_JSON_UTF8 :indexes {:username #{username} :age 27}})
   ;; perform a 2i query on the age index, as a range
-  (kv/index-query bucket :age [25 30]))
+  (kv/index-query conn bucket :age [25 30]))
 ```
 
 
 ## Deleting Values
 
-To delete an object, use `clojurewerkz.welle.kv/delete` function. In the simplest case it takes a bucket name and a key,
-just like `clojurewerkz.welle.kv/fetch`:
+To delete an object, use `clojurewerkz.welle.kv/delete` function. In
+the simplest case it takes a connection, bucket name, and key, just
+like `clojurewerkz.welle.kv/fetch`:
 
 ``` clojure
 (ns welle.docs.examples
@@ -442,16 +470,15 @@ just like `clojurewerkz.welle.kv/fetch`:
             [clojurewerkz.welle.kv      :as kv])
   (:import com.basho.riak.client.http.util.Constants))
 
-(wc/connect!)
-(wb/create "accounts")
-
-(let [bucket "accounts"
+(let [conn   (wc/connect)
+      bucket "accounts"
       key    "novemberain"
       val    {:name "Michael" :age 27 :username key}]
+  (wb/create conn bucket)
   ;; stores data serialized as JSON
-  (kv/store bucket key val :content-type Constants/CTYPE_JSON_UTF8)
+  (kv/store conn bucket key val {:content-type Constants/CTYPE_JSON_UTF8})
   ;; and deletes it
-  (kv/delete bucket key))
+  (kv/delete conn bucket key))
 ```
 
 
