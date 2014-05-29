@@ -22,7 +22,7 @@ stylesheets). The source is available [on GitHub](https://github.com/clojurewerk
 
 ## What version of Welle does this guide cover?
 
-This guide covers Welle 2.0, including development releases.
+This guide covers Welle 3.0, including development releases.
 
 
 ## Welle Overview
