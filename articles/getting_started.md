@@ -64,7 +64,7 @@ Welle artifacts are [released to Clojars](https://clojars.org/com.novemberain/we
 
 ### With Leiningen
 
-    [com.novemberain/welle "3.0.0-rc1"]
+    [com.novemberain/welle "3.0.0"]
 
 ### With Maven
 
@@ -83,7 +83,7 @@ And then the dependency:
 <dependency>
   <groupId>com.novemberain</groupId>
   <artifactId>welle</artifactId>
-  <version>3.0.0-rc</version>
+  <version>3.0.0</version>
 </dependency>
 ```
 
